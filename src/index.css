@@ -1,0 +1,12 @@
+body {
+  margin: 0
+}
+.MuiButton-root {
+  text-transform: none !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+
+.MuiButton-containedPrimary {
+  background: linear-gradient(256.28deg, #1C94F4 0%, #1273EA 100%);
+}
