@@ -1,14 +1,15 @@
-import { Box, Button, Typography } from '@mui/material'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { VisibilityOffOutlined, VisibilityOutlined } from '@mui/icons-material'
+import { Box, Button, InputAdornment, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import React, { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
-import { object, string } from 'yup'
-import FormField from '../components/FormField'
-import Input from '../components/Input'
-import { authServiceInstance } from '../contexts/AuthProvider'
-import { yupResolver } from '@hookform/resolvers/yup'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
+import { object, string } from 'yup'
+import FormField from '../../components/FormField'
+import Input from '../../components/Input'
+import { AuthService } from '../../services/auth'
 
 const useStyles = makeStyles({
     wrapper: {
@@ -37,6 +38,9 @@ const useStyles = makeStyles({
     },
     form: {
         width: '100%'
+    },
+    togglePasswordBtn: {
+        minWidth: 'unset !important'
     }
 })
 
@@ -47,6 +51,7 @@ const schema = object({
 const SignIn = () => {
     const classes = useStyles()
     const navigate = useNavigate()
+    const [passwordVisible, setPasswordVisible] = useState(false)
     const [isSubmitting, setSubmitting] = useState(false)
     const methods = useForm({
         defaultValues: {
@@ -56,10 +61,12 @@ const SignIn = () => {
         resolver: yupResolver(schema)
     })
 
+    const togglePasswordVisibility = useCallback(() => setPasswordVisible(visible => !visible), [])
+
     const onSubmit = useCallback(async (data) => {
         try {
             setSubmitting(true)
-            await authServiceInstance.login(data)
+            await AuthService.login(data)
             navigate('/')
         } catch (error) {
             toast(error.message, {
@@ -82,7 +89,19 @@ const SignIn = () => {
                         <Typography>Your Digital Passport</Typography>
                     </Box>
                         <FormField name="password" label="enter password" errors={methods.formState.errors}>
-                            <Input {...methods.register('password')} type="password" />
+                            <Input
+                                {...methods.register('password')}
+                                type={passwordVisible ? 'text' : 'password'}
+                                InputProps={{
+                                    endAdornment: (
+                                        <InputAdornment>
+                                            <Button className={classes.togglePasswordBtn} color="inherit" onClick={togglePasswordVisibility}>
+                                                {passwordVisible ? <VisibilityOffOutlined /> : <VisibilityOutlined />}
+                                            </Button>
+                                        </InputAdornment>
+                                    )
+                                }}
+                            />
                         </FormField>
                         <Button type="submit" variant="contained" disabled={isSubmitting}>
                             Unlock

@@ -1,53 +1,42 @@
-import axios from "axios";
-
-const http = axios.create({
-    baseURL: `${process.env.REACT_APP_API_URL}/auth`
-})
-
-http.interceptors.response.use(res => res.data, error => {
-    error.message = error.response?.data?.message || error.message
-    error.code = error.response?.data?.code
-    throw error
-})
+import { createAxiosInstance } from "../utils/axios";
 
 const REFRESH_TOKEN_STORAGE_KEY = 'ronin_refresh_token'
 
 export class AuthService {
-    accessToken = null
-    refreshToken = null
-    user = null
+    static accessToken = null
+    static refreshToken = localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY)
+    static user = null
+    static http = createAxiosInstance({
+        baseURL: `${process.env.REACT_APP_API_URL}/auth`
+    })
 
-    _stateListeners = []
+    static _stateListeners = []
 
-    constructor() {
-        this.refreshToken = localStorage.getItem(REFRESH_TOKEN_STORAGE_KEY)
+    static init = async () => {
+        if(!AuthService.refreshToken) throw new Error('Refresh token not found')
+        const res = await AuthService.http.post('/refresh', { refreshToken: AuthService.refreshToken })
+        AuthService.changeAuthState(res)
     }
 
-    init = async () => {
-        if(!this.refreshToken) throw new Error('Refresh token not found')
-        const res = await http.post('/refresh', { refreshToken: this.refreshToken })
-        this.changeAuthState(res)
+    static onAuthStateChange = (fn) => {
+        AuthService._stateListeners.push(fn)
     }
 
-    onAuthStateChange = (fn) => {
-        this._stateListeners.push(fn)
+    static removeAuthStateListener = (fn) => {
+        AuthService._stateListeners = AuthService._stateListeners.filter(listener => listener !== fn)
     }
 
-    removeAuthStateListener = (fn) => {
-        this._stateListeners = this._stateListeners.filter(listener => listener !== fn)
-    }
-
-    changeAuthState = ({ user, accessToken, refreshToken }) => {
-        this.user = user
-        this.accessToken = accessToken
-        this.refreshToken = refreshToken
+    static changeAuthState = ({ user, accessToken, refreshToken }) => {
+        AuthService.user = user
+        AuthService.accessToken = accessToken
+        AuthService.refreshToken = refreshToken
         localStorage.setItem(REFRESH_TOKEN_STORAGE_KEY, refreshToken)
-        this._stateListeners.forEach(fn => fn({ user, accessToken, refreshToken }))
+        AuthService._stateListeners.forEach(fn => fn({ user, accessToken, refreshToken }))
     }
 
-    login = async ({ password }) => {
-        const res = await http.post('/login', { password })
-        this.changeAuthState(res)        
+    static login = async ({ password }) => {
+        const res = await AuthService.http.post('/login', { password })
+        AuthService.changeAuthState(res)        
         return res
     }
 }

@@ -1,8 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { AuthService } from '../services/auth'
 
-export const authServiceInstance = new AuthService()
-
 const AuthContext = createContext({
     isInitialized: false,
     user: null
@@ -18,7 +16,7 @@ const AuthProvider = ({ children }) => {
 
     const initAuthState = async () => {
         try {
-            await authServiceInstance.init()
+            await AuthService.init()
         } catch (error) {
             console.log(error)
         } finally {
@@ -35,8 +33,8 @@ const AuthProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        authServiceInstance.onAuthStateChange(onAuthStateChange)
-        return () => authServiceInstance.removeAuthStateListener(onAuthStateChange)
+        AuthService.onAuthStateChange(onAuthStateChange)
+        return () => AuthService.removeAuthStateListener(onAuthStateChange)
     }, [onAuthStateChange])
 
     return (
