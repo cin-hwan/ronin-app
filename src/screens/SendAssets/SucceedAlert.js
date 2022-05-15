@@ -40,7 +40,7 @@ const SucceedAlert = ({ isOpen, onClose, currency }) => {
             </DialogTitle>
             <DialogContent className={classes.content}>
                 <Typography variant="body2" color="#151A30">
-                    Your {currency} has been sent!
+                    Your <Typography component="span" fontWeight={700}>{currency}</Typography> has been sent!
                 </Typography>
                 <Typography variant="body2" color="#151A30">
                     Thank you for using our service

@@ -15,6 +15,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { toast } from 'react-toastify'
 import { WalletService } from '../../services/wallet'
 import SucceedAlert from './SucceedAlert'
+import { useGlobal } from '../../contexts/GlobalProvider'
 
 const useStyles = makeStyles({
     form: {
@@ -31,10 +32,11 @@ const useStyles = makeStyles({
 })
 
 const SendAssets = () => {
+    const { currencies } = useGlobal()
     const { wallet, refetchWallet } = useAuth()
     const classes = useStyles()
     const [isSubmitting, setSubmitting] = useState(false)
-    const [isSuccess, setSuccess] = useState(false)
+    const [transferedCurrency, setTransferedCurrency] = useState(null)
 
     useEffect(() => {
         refetchWallet()
@@ -82,7 +84,7 @@ const SendAssets = () => {
             }
             await WalletService.instance.sendAsset(payload)
             methods.reset(defaultValues)
-            setSuccess(true)
+            setTransferedCurrency(currencies[payload.asset])
         } catch (error) {
             console.error(error)
             toast(error.message, {
@@ -91,16 +93,16 @@ const SendAssets = () => {
         } finally {
             setSubmitting(false)
         }
-    }, [defaultValues, methods, wallet.no])
+    }, [currencies, defaultValues, methods, wallet.no])
 
     const onConfirmSuccess = useCallback(() => {
-        setSuccess(false)
+        setTransferedCurrency(null)
         navigate('/')
     }, [navigate])
 
     return (
         <>
-            <SucceedAlert isOpen={isSuccess} onClose={onConfirmSuccess} />
+            <SucceedAlert isOpen={!!transferedCurrency} onClose={onConfirmSuccess} currency={transferedCurrency?.displayText} />
             <form className={classes.form} onSubmit={methods.handleSubmit(onSubmit)}>
                 <Box className={classes.container}>
                     <Header onGoBack={onGoBack} />
