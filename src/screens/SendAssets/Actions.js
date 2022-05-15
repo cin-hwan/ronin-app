@@ -27,16 +27,16 @@ const useStyles = makeStyles({
     }
 })
 
-const Actions = ({ onCancel }) => {
+const Actions = ({ onCancel, isSubmitting }) => {
     const classes = useStyles()
 
     return (
         <Box className={classes.container}>
             <Box className={classes.wrapper}>
-                <Button onClick={onCancel} className={classNames(classes.action, classes.cancel)}>
+                <Button onClick={onCancel} className={classNames(classes.action, classes.cancel)} disabled={isSubmitting}>
                     <Typography variant="body2">Cancel</Typography>
                 </Button>
-                <Button type="submit" variant="contained" className={classNames(classes.action, classes.send)}>
+                <Button type="submit" variant="contained" className={classNames(classes.action, classes.send)} disabled={isSubmitting}>
                     <Typography variant="body2">Send</Typography>
                 </Button>
             </Box>
