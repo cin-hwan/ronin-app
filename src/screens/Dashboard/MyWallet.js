@@ -1,8 +1,10 @@
 import { Box, Button, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
-import React, { useCallback } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { ReactComponent as CopyIcon } from '../../assets/icons/copy.svg'
 import { useAuth } from '../../contexts/AuthProvider'
+import { useGlobal } from '../../contexts/GlobalProvider'
+import { currencyFormatter } from '../../utils/formatter'
 
 
 const useStyles = makeStyles({
@@ -39,7 +41,7 @@ const useStyles = makeStyles({
     },
     localBalance: {
         fontSize: '16px !important',
-        fontWeight: '600 !important',
+        fontWeight: '500 !important',
         color: '#8DC9F9'
     },
     logoContainer: {
@@ -50,23 +52,52 @@ const useStyles = makeStyles({
 })
 
 const MyWallet = () => {
-    const { user } = useAuth()
+    const { baseCurrency, currencies = {} } = useGlobal()
+    const { user, wallet } = useAuth()
     const classes = useStyles()
 
+    const { baseBalance, baseCurrencyInfo } = useMemo(() => {
+        const baseCurrencyInfo = currencies[baseCurrency]
+        const baseAsset = wallet.assets.find(asset => asset.currency === baseCurrency)
+        if (!baseCurrencyInfo || !baseAsset) return {
+            baseBalance: 0,
+            baseCurrencyInfo: baseCurrencyInfo ?? null
+        }
+        
+        return {
+            baseBalance: baseAsset.balance,
+            baseCurrencyInfo
+        }
+    }, [baseCurrency, currencies, wallet.assets])
+
+    const { localBalance, localCurrencyInfo } = useMemo(() => {
+        const localCurrencyInfo = currencies[user.localCurrency]
+        if (!localCurrencyInfo) return {
+            localBalance: 0,
+            localCurrencyInfo: null
+        }
+        const localBalance = baseBalance / localCurrencyInfo.rate
+
+        return {
+            localBalance,
+            localCurrencyInfo
+        }
+    }, [baseBalance, currencies, user.localCurrency])
+
     const onCopyAddress = useCallback(() => {
-        navigator.clipboard.writeText(user.walletNumber)
-    }, [user.walletNumber])
+        navigator.clipboard.writeText(user.walletNo)
+    }, [user.walletNo])
 
     return (
         <Box className={classes.container}>
             <Box className={classes.header}>
                 <Typography>
-                    <Typography component="span" color="#fff" variant="body2">
+                    <Typography component="span" color="#fff" variant="body2" fontWeight={600}>
                         My Wallet
                     </Typography>
                     &nbsp;
                     <Typography component="span" color="#8DC9F9" variant="body2">
-                        ({user.walletNumber})
+                        ({user.walletNo})
                     </Typography>
                 </Typography>
                 <Box>
@@ -77,10 +108,10 @@ const MyWallet = () => {
             </Box>
             <Box className={classes.balance}>
                 <Typography className={classes.mainBalance}>
-                    1000 USD
+                    {currencyFormatter.format(baseBalance)} {baseCurrencyInfo?.displayText || ''}
                 </Typography>
                 <Typography className={classes.localBalance}>
-                    23,046,000 VND
+                    {currencyFormatter.format(localBalance)} {localCurrencyInfo?.displayText || ''}
                 </Typography>
             </Box>
             <Box className={classes.logoContainer}>

@@ -42,7 +42,7 @@ const DashboardHeader = () => {
         <Box className={classes.container}>
             <Box className={classes.roninWallet}>
                 <Box className={classes.dot} />
-                <Typography>Ronin Wallet</Typography>
+                <Typography variant="caption" fontWeight={700}>Ronin Wallet</Typography>
             </Box>
             <Box className={classes.profileMenu}>
                 <Button className={classes.profileBtn} color="primary">

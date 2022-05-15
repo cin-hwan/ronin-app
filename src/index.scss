@@ -1,0 +1,33 @@
+* {
+  font-family: 'SF Pro Display', sans-serif !important;
+}
+body {
+  margin: 0
+}
+.MuiButton-root {
+  min-width: unset !important;
+  text-transform: none !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+}
+
+.MuiButton-containedPrimary {
+  background: linear-gradient(256.28deg, #1C94F4 0%, #1273EA 100%);
+}
+
+.MuiTextField-root {
+  width: 100%;
+  .MuiInputBase-root.Mui-disabled {
+    background: #EDF1F7;
+    * {
+      color: #8F9BB3 !important;
+    }
+  }
+  input {
+    height: 40px;
+    padding: 0 16px;
+  }
+  .MuiInputBase-root {
+    border-radius: 8px;
+  }
+}

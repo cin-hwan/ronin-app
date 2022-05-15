@@ -1,9 +1,13 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { AuthService } from '../services/auth'
+import { WalletService } from '../services/wallet'
 
 const AuthContext = createContext({
     isInitialized: false,
-    user: null
+    user: null,
+    wallet: null,
+    refetchWallet: () => {}
 })
 
 export function useAuth() {
@@ -13,12 +17,29 @@ export function useAuth() {
 const AuthProvider = ({ children }) => {
     const [isInitialized, setInitialized] = useState(false)
     const [user, setUser] = useState(null)
+    const [wallet, setWallet] = useState(null)
 
-    const initAuthState = async () => {
+    const getMyWallet = useCallback(async () => {
         try {
-            await AuthService.init()
+            const myWallet = await WalletService.instance.getMyWallet()
+            setWallet(myWallet)
         } catch (error) {
-            console.log(error)
+            console.error(error)
+            toast(error.message, {
+                type: 'error'
+            })
+        }
+    }, [])
+
+    const init = async () => {
+        try {
+            await AuthService.instance.init()
+            getMyWallet()
+        } catch (error) {
+            console.error(error)
+            toast(error.message, {
+                type: 'error'
+            })
         } finally {
             setInitialized(true)
         }
@@ -29,18 +50,21 @@ const AuthProvider = ({ children }) => {
     }, [])
 
     useEffect(() => {
-        initAuthState()
+        init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     useEffect(() => {
-        AuthService.onAuthStateChange(onAuthStateChange)
-        return () => AuthService.removeAuthStateListener(onAuthStateChange)
+        AuthService.instance.onAuthStateChange(onAuthStateChange)
+        return () => AuthService.instance.removeAuthStateListener(onAuthStateChange)
     }, [onAuthStateChange])
 
     return (
         <AuthContext.Provider value={{
             isInitialized,
-            user
+            user,
+            wallet,
+            refetchWallet: getMyWallet
         }}>
             {children}
         </AuthContext.Provider>

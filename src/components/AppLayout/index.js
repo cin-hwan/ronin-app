@@ -5,7 +5,7 @@ import React from 'react'
 const useStyles = makeStyles({
     container: {
         height: '100vh',
-        padding: '0 20px !important'
+        padding: '0 !important'
     },
     paper: {
         height: '100%',

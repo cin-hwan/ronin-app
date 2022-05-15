@@ -1,6 +1,6 @@
 import { yupResolver } from '@hookform/resolvers/yup'
 import { VisibilityOffOutlined, VisibilityOutlined } from '@mui/icons-material'
-import { Box, Button, InputAdornment, Typography } from '@mui/material'
+import { Box, Button, InputAdornment, TextField, Typography } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import React, { useCallback, useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -8,17 +8,16 @@ import { useNavigate } from 'react-router-dom'
 import { toast } from 'react-toastify'
 import { object, string } from 'yup'
 import FormField from '../../components/FormField'
-import Input from '../../components/Input'
 import { AuthService } from '../../services/auth'
 
 const useStyles = makeStyles({
     wrapper: {
-        width: '100%',
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
-        alignItems: 'center'
+        alignItems: 'center',
+        padding: '0 20px'
     },
     formContainer: {
         width: '100%',
@@ -66,9 +65,10 @@ const SignIn = () => {
     const onSubmit = useCallback(async (data) => {
         try {
             setSubmitting(true)
-            await AuthService.login(data)
+            await AuthService.instance.login(data)
             navigate('/')
         } catch (error) {
+            console.error(error)
             toast(error.message, {
                 type: 'error'
             })
@@ -89,12 +89,12 @@ const SignIn = () => {
                         <Typography>Your Digital Passport</Typography>
                     </Box>
                         <FormField name="password" label="enter password" errors={methods.formState.errors}>
-                            <Input
+                            <TextField
                                 {...methods.register('password')}
                                 type={passwordVisible ? 'text' : 'password'}
                                 InputProps={{
                                     endAdornment: (
-                                        <InputAdornment>
+                                        <InputAdornment position="end">
                                             <Button className={classes.togglePasswordBtn} color="inherit" onClick={togglePasswordVisibility}>
                                                 {passwordVisible ? <VisibilityOffOutlined /> : <VisibilityOutlined />}
                                             </Button>

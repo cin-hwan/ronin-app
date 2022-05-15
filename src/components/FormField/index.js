@@ -15,7 +15,8 @@ const useStyles = makeStyles({
         fontSize: '10px !important',
         fontWeight: '700 !important',
         textTransform: 'uppercase',
-        color: '#57627B'
+        color: '#57627B',
+        width: '100%'
     },
     errorMessage: {
         fontSize: '12px !important',
