@@ -96,7 +96,7 @@ const MyWallet = () => {
                         My Wallet
                     </Typography>
                     &nbsp;
-                    <Typography component="span" color="#8DC9F9" variant="body2">
+                    <Typography component="span" color="#8DC9F9" variant="body2" fontWeight={400}>
                         ({user.walletNo})
                     </Typography>
                 </Typography>
