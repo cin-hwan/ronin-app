@@ -36,9 +36,6 @@ const AuthProvider = ({ children }) => {
             await AuthService.instance.init()
         } catch (error) {
             console.error(error)
-            toast(error.message, {
-                type: 'error'
-            })
         } finally {
             setInitialized(true)
         }
