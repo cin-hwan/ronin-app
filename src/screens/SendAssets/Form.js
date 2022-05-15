@@ -147,7 +147,7 @@ const Form = ({ methods }) => {
                     </FormField>
                 )}
             />
-            <FormField name="amount" label={(
+            <FormField errors={methods.formState.errors} name="amount" label={(
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
                     <Typography color="inherit" fontSize="inherit" fontWeight="inherit">
                         Amount

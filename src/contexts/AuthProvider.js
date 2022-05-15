@@ -34,7 +34,6 @@ const AuthProvider = ({ children }) => {
     const init = async () => {
         try {
             await AuthService.instance.init()
-            getMyWallet()
         } catch (error) {
             console.error(error)
             toast(error.message, {
@@ -53,6 +52,15 @@ const AuthProvider = ({ children }) => {
         init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        if (user) {
+            getMyWallet()
+        } else {
+            setWallet(null)
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user])
 
     useEffect(() => {
         AuthService.instance.onAuthStateChange(onAuthStateChange)

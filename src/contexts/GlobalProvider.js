@@ -1,10 +1,13 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { GlobalService } from '../services/global'
 
 const GlobalContext = createContext({
     currencies: {},
-    baseCurrency: null
+    baseCurrency: null,
+    confirmDialog: null,
+    showConfirmDialog: (options) => {},
+    hideConfirmDialog: () => {}
 })
 
 export function useGlobal() {
@@ -12,6 +15,7 @@ export function useGlobal() {
 }
 
 const GlobalProvider = ({ children }) => {
+    const [confirmDialog, setConfirmDialog] = useState(null)
     const [globalConfigs, setGlobalConfigs] = useState({})
 
     const init = async () => {
@@ -30,8 +34,16 @@ const GlobalProvider = ({ children }) => {
         init();
     }, [])
 
+    const showConfirmDialog = useCallback((options) => setConfirmDialog(options), [])
+    const hideConfirmDialog = useCallback(() => setConfirmDialog(null), [])
+
     return (
-        <GlobalContext.Provider value={globalConfigs}>
+        <GlobalContext.Provider value={{
+            ...globalConfigs,
+            confirmDialog,
+            showConfirmDialog,
+            hideConfirmDialog
+        }}>
             {children}
         </GlobalContext.Provider>
     )

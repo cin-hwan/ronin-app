@@ -30,4 +30,10 @@ body {
   .MuiInputBase-root {
     border-radius: 8px;
   }
+  .MuiInputBase-inputAdornedStart {
+    padding-left: 0;
+  }
+  .MuiInputBase-inputAdornedEnd {
+    padding-right: 0;
+  }
 }

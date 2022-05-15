@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AppLayout from './components/AppLayout';
+import ConfirmModal from './components/ConfirmModal';
 import SendAssets from './screens/SendAssets';
 
 const Dashboard = lazy(() => import('./screens/Dashboard'))
@@ -12,6 +13,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <AppLayout>
+        <ConfirmModal />
         <ToastContainer position="top-center" />
         <Suspense
           fallback="Loading..."

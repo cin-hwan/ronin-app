@@ -19,4 +19,8 @@ export class WalletService {
     getMyWallet = () => {
         return this.http.get('/me')
     }
+
+    sendAsset = (data) => {
+        return this.http.post('/send', data)
+    }
 }

@@ -31,7 +31,7 @@ export class AuthService {
     }
 
     init = async () => {
-        if(!this.refreshToken) throw new Error('Refresh token not found')
+        if(!this.refreshToken) throw new Error('Please sign in to continue')
         await this.refresh()
     }
 
